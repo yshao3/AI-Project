@@ -8,9 +8,11 @@ def getSPPE(path):
 			if (len(row) >= 2):
 				try:
 					key = row[0].split("-")
-					if len(key) < 3: 
+					if len(key) < 2: 
 						continue
-					k = key[0][2:]+'-'+key[1]
+					k = key[0][-2:]+'-'+key[1]
+					date = datetime.strptime(k,'%y-%m')
+					k = str(date.strftime('%y-%m'))
 					if k not in dic:
 						dic[k] = {}
 					dic[k]['PE'] = float (row[1])
@@ -24,8 +26,8 @@ def getSP(path):
 			if (len(row) >= 4):
 				try:
 					date = datetime.strptime(row[1],'%m/%d/%y')
-					k = date.strftime('%y-%m')
-	
+					k = str(date.strftime('%y-%m'))
+					# print k
 					if k not in dic:
 						dic[k] = {}
 					dic[k]['SP'] = float (row[2])
@@ -33,24 +35,24 @@ def getSP(path):
 				except ValueError:
 					continue
 
-def getSPYTD(path):
-	with open(path,'rb') as p:
-		reader = csv.reader(p)
-		for row in reader:
-			if (len(row) >= 2):
-				try:
-					key = row[0].split("-")
-					if len(key) < 3: 
-						continue
-					k = key[0][2:]+'-'+key[1]
-					print(k)
-					if k not in dic:
-						dic[k] = {}
-					if 'YTD' not in dic[k]:
-						dic[k]['YTD'] =0
-					dic[k]['YTD'] += float (row[1])
-				except ValueError:
-					continue
+# def getSPYTD(path):
+# 	with open(path,'rb') as p:
+# 		reader = csv.reader(p)
+# 		for row in reader:
+# 			if (len(row) >= 2):
+# 				try:
+# 					key = row[0].split("-")
+# 					if len(key) < 2: 
+# 						continue
+# 					k = key[0][2:]+'-'+key[1]
+# 					# print(k)
+# 					if k not in dic:
+# 						dic[k] = {}
+# 					if 'YTD' not in dic[k]:
+# 						dic[k]['YTD'] =0
+# 					dic[k]['YTD'] += float (row[1])
+# 				except ValueError:
+# 					continue
 				
 def getGoldM(path):
 	with open(path,'rb') as p:
@@ -59,8 +61,8 @@ def getGoldM(path):
 			try:
 				if (len(row) >= 4):
 					date = datetime.strptime(row[1],'%m/%d/%y')
-					k = date.strftime('%y-%m')
-	
+					k = str(date.strftime('%y-%m'))
+					# print k
 					if k not in dic:
 						dic[k] = {}
 					dic[k]["Gold"] = float (row[2])
@@ -75,9 +77,12 @@ def getLibor(path):
 			if (len(row) >= 2):
 				try:
 					key = row[0].split("-")
-					if len(key) < 3: 
+					if len(key) < 2: 
 						continue
-					k = key[0][2:]+'-'+key[1]
+					k = key[0][-2:]+'-'+key[1]
+					date = datetime.strptime(k,'%y-%m')
+					k = str(date.strftime('%y-%m'))
+					print k
 					if k not in dic:
 						dic[k] = {}
 					if 'Libor' not in dic[k]:
@@ -96,6 +101,9 @@ def getOilM(path):
 					if len(key) < 3: 
 						continue
 					k = key[0][2:]+'-'+key[1]
+					date = datetime.strptime(k,'%y-%m')
+					k = str(date.strftime('%y-%m'))
+					# print k
 					if k not in dic:
 						dic[k] = {}
 					dic[k]['Oil'] = float (row[2])
@@ -111,6 +119,7 @@ def getDJ(path):
 				try:
 					date = datetime.strptime(row[1],'%m/%d/%y')
 					k = str(date.strftime('%y-%m'))
+					# print k
 					if k not in dic:
 						dic[k] = {}
 					dic[k]['DJ'] = float (row[2])
@@ -119,16 +128,16 @@ def getDJ(path):
 					continue
 getSP("SP500.csv")
 getSPPE("SP500PE.csv")
-getSPYTD("SP500YTD.csv")
+# getSPYTD("SP500YTD.csv")
 getDJ("DJM.csv")
 getOilM("OilM.csv")
 getGoldM("GoldM.csv")
 getLibor("LibD.csv")
-print(dic['17-01'])
+# print(dic['17-01'])
 writer = csv.writer(open("features.csv","w"))
-writer.writerow(["Key", "SP", "SPn", "PE","DJ","DJn","Gold", "Goldn","Oil","Oiln","Libor","SPYTD"])
+writer.writerow(["Key", "SP", "SPn", "PE","DJ","DJn","Gold", "Goldn","Oil","Oiln","Libor"])
 for k in dic.keys():
-	key = k
+	key = str(k)
 	if 'SP' not in dic[k]:
 		sp = 0
 	else:
@@ -149,11 +158,11 @@ for k in dic.keys():
 		oiln = 0
 	else:
 		oiln =dic[k]['Oiln']
-	if 'YTD' not in dic[k]:
-		ytd = 0
-	else:
-		print dic[k]['YTD']
-		ytd =dic[k]['YTD']
+	# if 'YTD' not in dic[k]:
+	# 	ytd = 0
+	# else:
+	# 	# print dic[k]['YTD']
+	# 	ytd =dic[k]['YTD']
 	if 'PE' not in dic[k]:
 		pe = 0
 	else:
@@ -174,4 +183,4 @@ for k in dic.keys():
 		goldn = 0
 	else:
 		goldn =dic[k]['Goldn']
-	writer.writerow([key, sp, spn, pe,dj,djn, gold,goldn,oil,oiln,lib,ytd])
+	writer.writerow([key, sp, spn, pe,dj,djn, gold,goldn,oil,oiln,lib])
