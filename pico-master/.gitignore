@@ -1,0 +1,11 @@
+
+*.pyc
+.DS_Store
+MANIFEST
+
+build/
+dist/
+
+docs/_build
+
+ship.sh
